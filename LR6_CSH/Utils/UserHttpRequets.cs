@@ -15,29 +15,33 @@ namespace LR6_CSH_Client.Utils
         static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 
-        public static async Task PeriodicGetMessage(TimeSpan interval, HttpClient client, string backendUrl)
+        public static async Task PeriodicGetMessage(TimeSpan interval, HttpClient client, string backendUrl, UsersData userD)
         {
             var ct = tokenSource.Token;
             while (!tokenSource.IsCancellationRequested)
             {
-               //if (!cancellationToken.IsCancellationRequested)
-                await GettingMessages(client, backendUrl);
+                //if (!cancellationToken.IsCancellationRequested)
+                await Task.Run(() => GettingMessages(client, backendUrl, userD));
                 await Task.Delay(interval, ct);
             }
         }
 
-        public async static Task GettingMessages(HttpClient client, string backendUrl) //
+        public static async void GettingMessages(HttpClient client, string backendUrl, UsersData userD) //
         {
-            var response = await client.GetAsync($"{backendUrl}/get-messages").
-               ConfigureAwait(false); // for thisfunc go to another thread
-            
-            if (response.IsSuccessStatusCode)
+            var response = client.GetAsync($"{backendUrl}/get-messages").Result;
+            //ConfigureAwait(false); // for thisfunc go to another thread
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return;
+            }
+            else if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                UsersData.AddrecievedMessages(json);
+                UsersData.AddRecievedMessages(json);
             }
-            else if(response.StatusCode == System.Net.HttpStatusCode.NoContent)
-            {            }
+            //else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            //{ }
             else
             {
                 tokenSource.Cancel();

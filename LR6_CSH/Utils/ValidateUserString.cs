@@ -1,96 +1,47 @@
-﻿using System.Linq;
+﻿using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
-namespace LR4_CSH
+namespace LR6_CSH_Client.Utils
 {
-    class ValidateUserString
+    public class ValidateUserString
     {
-        public static void CellValidatingForLetterOnly(object sender, DataGridViewCellValidatingEventArgs e, DataGridView dataGridView, out bool isValid)
+        public static bool CellValidatingForLetterWithSpases(TextBox login, MaskedTextBox password)
         {
-            isValid = true;
-            dataGridView.Rows[e.RowIndex].ErrorText = "";
-            if (dataGridView.Rows[e.RowIndex].IsNewRow) { return; }
-            if (HasSpecialCharsOrDigitOrSpaces(e.FormattedValue.ToString()))
+            if (HasSpecialCharsOrSpaces(login.Text))
             {
-                isValid = false;
-                e.Cancel = true;
-                MessageBox.Show("Enter letters only.");
-            }
-        }
-        public static void CellValidatingForLetterWithSpases(object sender, DataGridViewCellValidatingEventArgs e, DataGridView dataGridView, out bool isValid)
-        {
-            isValid = true;
-            dataGridView.Rows[e.RowIndex].ErrorText = "";
-            if (dataGridView.Rows[e.RowIndex].IsNewRow) { return; }
-            if (HasSpecialCharsOrDigit(e.FormattedValue.ToString()))
-            {
-                isValid = false;
-                e.Cancel = true;
-                MessageBox.Show("Enter letters only.");
-            }
-        }
-        public static void CellValidatingForDigitOnly(object sender, DataGridViewCellValidatingEventArgs e, DataGridView dataGridView, out bool isValid)
-        {
-            isValid = true;
-            dataGridView.Rows[e.RowIndex].ErrorText = "";
-            if (dataGridView.Rows[e.RowIndex].IsNewRow) { return; }
-            if (!IsDigit(e.FormattedValue.ToString()))
-            {
-                isValid = false;
-                e.Cancel = true;
-                MessageBox.Show("Enter digits only.");
-            }
-        }
-        public static void CellValidatingForUniqness(object sender, DataGridViewCellEventArgs e, DataGridView dataGridView, out bool isValid)
-        {
-            isValid = true;
-            int hitCounter = 0;
-            dataGridView.Rows[e.RowIndex].ErrorText = "";
-            if (dataGridView.Rows[e.RowIndex].IsNewRow) { return; }
-            for (int i = 0; i < dataGridView.Rows.Count - 1; i++)
-            {
-                if (dataGridView.Rows[i].Cells[e.ColumnIndex].Value.ToString() == dataGridView.CurrentCell.Value.ToString())
-                {
-                    hitCounter++;
-                }
-            }
-            if (hitCounter > 1)
-            {
-                isValid = false;
-                MessageBox.Show("Enter only uniqe ID.");
-            }
-        }
-        private static bool HasSpecialCharsOrDigitOrSpaces(string str)
-        {
-            return str.Any(ch => !char.IsLetter(ch));
-        }
-        private static bool HasSpecialCharsOrDigit(string str)
-        {
-            return str.Any(ch =>
-            {
-                if (!char.IsLetter(ch))
-                {
-                    if (char.IsWhiteSpace(ch))
-                    {
-                        return false;
-                    }
-                    else return true;
-                }
+                login.BackColor = Color.FromKnownColor(KnownColor.LightSalmon);
+                MessageBox.Show("Login shouldn't contain spases, or any spesial character.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
-            });
+            }
+            if(password.Text.Contains(" "))
+            {
+                password.BackColor = Color.FromKnownColor(KnownColor.LightSalmon);
+                MessageBox.Show("Password shouldn't contain spases.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            else if (string.IsNullOrEmpty(password.Text))
+            {
+                password.BackColor = Color.FromKnownColor(KnownColor.LightSalmon);
+                MessageBox.Show("Enter the password!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            else if(password.Text.Length > 8)
+            {
+                password.BackColor = Color.FromKnownColor(KnownColor.LightSalmon);
+                MessageBox.Show("Password shouldn't be more than 8 symbols", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+       
+        private static bool HasSpecialCharsOrSpaces(string str)
+        {
+            return str.Any(ch => !char.IsLetter(ch) && !char.IsDigit(ch));
         }
         private static bool IsDigit(string str)
         {
             return str.All(ch => char.IsDigit(ch));
-        }
-        public static string CapitalizeFirstLetter(string str)
-        {
-            if (str == null || str.Length == 0)
-                return "";
-            else if (str.Length == 1)
-                return char.ToUpper(str[0]).ToString();
-            else
-                return char.ToUpper(str[0]) + str.Substring(1);
         }
     }
 }

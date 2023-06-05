@@ -11,13 +11,13 @@ namespace LR6_CSH_Server
     {
         //private string _id;
         public static List<UserOnServer> UsersOnServer { get; set; } = new List<UserOnServer>();
-        public static List<UserOnServer> UsersOnServerWithToken { get; set; } = new List<UserOnServer>();
+        public static List<UserPack> UsersPack { get; set; } = new List<UserPack>();
 
         // private string Id { get => _id; set => Guid.NewGuid().ToString(); }
         public string Password { get; set; }
         public string Login { get; set; }
         public string Token { get; set; }
-        public List<string> Messages { get; set; }
+        public List<string> Messages { get; set; } = new List<string>();
         private static object locker = new object();
 
         public UserOnServer() { }
@@ -26,24 +26,29 @@ namespace LR6_CSH_Server
             Password = password;
             Login = login;
             Token = token;
+            Messages = new List<string>();
         }
 
-        public static void ConstructUsersOnServer(UserPack user, string token)
+        public static Task ConstructUsersOnServer(UserPack user, string token, ref CancellationTokenSource tokenSource, out CancellationToken ct)
         {
+            ct = tokenSource.Token;
             var newUser = new UserOnServer(user.Password, user.Login, token);
-            if (!UsersOnServer.Contains(newUser) &&
-                UsersOnServer.Where(y => y.Login == user.Login).ToList().Count > 0)
+            if (!UsersOnServer.Any(y => y.Login == user.Login))
             {
                 //lock (locker)
                 {
                     UsersOnServer.Add(newUser);
+                    UsersPack.Add(new UserPack(newUser.Password, newUser.Login, newUser.Messages));
                 }
                 Console.WriteLine($"Data of user {user.Login} received successfully.");
+                return Task.CompletedTask;
             }
             else
-            {
-                Console.Write($"User {user.Login} already exist.");
-                throw new ArgumentException($"User {user.Login} already exist.");
+            {                
+                Console.WriteLine($"User {user.Login} already exist.");
+                tokenSource.Cancel();
+                return Task.FromCanceled(ct);
+                //throw new ArgumentException($"User {user.Login} already exist.");
             }
         }
         public static int CheckUsersPerenceAndPassword(UserPack user)

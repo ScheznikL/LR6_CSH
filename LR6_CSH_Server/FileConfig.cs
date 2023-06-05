@@ -26,7 +26,10 @@ namespace LR6_CSH_Server
                     {
                         Console.WriteLine($"Fail to load users from file.");
                     }
-                    Console.WriteLine($"Server gets users info.");
+                    else
+                    {
+                        Console.WriteLine($"Server gets users info.");
+                    }                    
                 }
                 else
                 {
@@ -51,18 +54,20 @@ namespace LR6_CSH_Server
             return filepath;
         }
 
-        public static void UpdateJSONfile()
+        public static void UpdateJSONfile(CancellationToken ct)
         {
-            try
+            if (!ct.IsCancellationRequested)
             {
-                JSONOrganaizer.SerializeUserData(filepath);
-                Console.WriteLine("JSON File updated.");
+                try
+                {
+                    JSONOrganaizer.SerializeUserData(filepath);
+                    Console.WriteLine("JSON File updated.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while updating file, message: {ex.Message}");
+                }
             }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"Error while updating file, message: {ex.Message}");
-            }
-
         }
 
     }

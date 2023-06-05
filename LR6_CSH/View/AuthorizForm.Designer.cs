@@ -30,11 +30,12 @@
         {
             this.btRegister = new System.Windows.Forms.Button();
             this.btLogIn = new System.Windows.Forms.Button();
-            this.tbPassword = new System.Windows.Forms.TextBox();
             this.tbLogin = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panelLogIn = new System.Windows.Forms.Panel();
+            this.checkBox = new System.Windows.Forms.CheckBox();
+            this.tbPassword = new System.Windows.Forms.MaskedTextBox();
             this.panelMainWin = new System.Windows.Forms.Panel();
             this.panelLogIn.SuspendLayout();
             this.SuspendLayout();
@@ -51,7 +52,6 @@
             this.btRegister.Text = "Sign up";
             this.btRegister.UseVisualStyleBackColor = false;
             this.btRegister.Click += new System.EventHandler(this.btRegister_Click);
-            this.btRegister.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btRegister_MouseDown);
             // 
             // btLogIn
             // 
@@ -65,15 +65,6 @@
             this.btLogIn.Text = "Sing in";
             this.btLogIn.UseVisualStyleBackColor = false;
             this.btLogIn.Click += new System.EventHandler(this.btLogIn_Click);
-            this.btLogIn.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btLogIn_MouseClick);
-            // 
-            // tbPassword
-            // 
-            this.tbPassword.Location = new System.Drawing.Point(129, 104);
-            this.tbPassword.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tbPassword.Name = "tbPassword";
-            this.tbPassword.Size = new System.Drawing.Size(215, 27);
-            this.tbPassword.TabIndex = 2;
             // 
             // tbLogin
             // 
@@ -82,6 +73,7 @@
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(215, 27);
             this.tbLogin.TabIndex = 3;
+            this.tbLogin.TextChanged += new System.EventHandler(this.tbLogin_TextChanged);
             // 
             // label1
             // 
@@ -107,6 +99,7 @@
             // 
             // panelLogIn
             // 
+            this.panelLogIn.Controls.Add(this.checkBox);
             this.panelLogIn.Controls.Add(this.tbPassword);
             this.panelLogIn.Controls.Add(this.label2);
             this.panelLogIn.Controls.Add(this.btRegister);
@@ -118,6 +111,25 @@
             this.panelLogIn.Name = "panelLogIn";
             this.panelLogIn.Size = new System.Drawing.Size(435, 229);
             this.panelLogIn.TabIndex = 6;
+            // 
+            // checkBox
+            // 
+            this.checkBox.AutoSize = true;
+            this.checkBox.Location = new System.Drawing.Point(350, 111);
+            this.checkBox.Name = "checkBox";
+            this.checkBox.Size = new System.Drawing.Size(64, 24);
+            this.checkBox.TabIndex = 7;
+            this.checkBox.Text = "Show";
+            this.checkBox.UseVisualStyleBackColor = true;
+            this.checkBox.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            // 
+            // tbPassword
+            // 
+            this.tbPassword.Location = new System.Drawing.Point(129, 108);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.PasswordChar = '*';
+            this.tbPassword.Size = new System.Drawing.Size(215, 27);
+            this.tbPassword.TabIndex = 6;
             // 
             // panelMainWin
             // 
@@ -149,12 +161,13 @@
 
         private System.Windows.Forms.Button btRegister;
         private System.Windows.Forms.Button btLogIn;
-        private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.TextBox tbLogin;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panelLogIn;
         private System.Windows.Forms.Panel panelMainWin;
+        private System.Windows.Forms.MaskedTextBox tbPassword;
+        private System.Windows.Forms.CheckBox checkBox;
     }
 }
 

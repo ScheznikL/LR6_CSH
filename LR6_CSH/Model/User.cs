@@ -11,6 +11,7 @@ namespace LR6_CSH_Client.Model
         public string Password { get; set; }
         public string Login { get; set; }
         public string Message { get; set; } = "";
+        public List<string> Messages { get; set; } = new List<string>();
         public string Resiver { get; set; } = "None";
 
         public User() { }

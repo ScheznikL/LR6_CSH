@@ -8,7 +8,7 @@ namespace LR6_CSH_Server
 {
     class UserMessage
     {
-        public static List<UserMessage>  UserMessages { get; set; } = new List<UserMessage>();
+        //public static List<UserMessage> UserMessages { get; set; } = new List<UserMessage>();
         public string SenderLogin { get; set; }
         public string RecieverLogin { get; set; }
         public string Message { get; set; }
@@ -21,20 +21,47 @@ namespace LR6_CSH_Server
             SenderLogin = senderLogin;
             RecieverLogin = recieverLogin;
             Message = message;
+            AdaptToUserOnServer();
         }
-        public static IEnumerable<UserMessage> FindMessages(UserPack user)
+
+        private void AdaptToUserOnServer()
         {
-            if (UserMessages.Count > 0)
+            foreach (var user in UserOnServer.UsersOnServer)
             {
-                var messagesList = UserMessages.Select(x => x).Where(y => y.RecieverLogin == user.Login);
-                UserMessages.RemoveAll(y => y.RecieverLogin == user.Login);
-                Console.WriteLine($"All {user.Login} messages send to be recieved");
-                return messagesList;
+                if (user.Login == RecieverLogin)
+                {
+                    user.Messages.Add(Message);
+                }
+            }
+        }
+
+        public static bool FindMessages(string usertoken)
+        {
+            var userWithMessages = UserOnServer.UsersOnServer.Where(x => x.Token == usertoken && x.Messages.Count > 0).FirstOrDefault();
+            if (UserOnServer.UsersOnServer.Any(x => x.Token == usertoken && x.Messages.Count > 0))
+            {
+                PreparePack(usertoken, userWithMessages.Messages);
+                return true;
             }
             else
             {
-                return null;
+                return false;
             }
+        }
+
+        private static void PreparePack(string usertoken, List<string> messages)
+        {
+            if(!UserOnServer.UsersPack.Where(x => $"{x.Login}:{x.Password}" == usertoken).FirstOrDefault().Messages.Equals(messages))
+            {
+                UserOnServer.UsersPack.Where(x => $"{x.Login}:{x.Password}" == usertoken).FirstOrDefault().Messages.AddRange(messages);
+            }
+        }
+
+        public static void ClearePotentiallyReadMes(string usertoken)
+        {
+            var userWithMessages = UserOnServer.UsersOnServer.Where(x => x.Token == usertoken && x.Messages.Count > 0).FirstOrDefault();
+            int index = UserOnServer.UsersOnServer.IndexOf(userWithMessages);//TODO 
+            UserOnServer.UsersOnServer[UserOnServer.UsersOnServer.IndexOf(userWithMessages)].Messages.Clear();
         }
     }
 }

@@ -85,6 +85,12 @@
     <Compile Include="Utils\SerializeJSON.cs" />
     <Compile Include="Utils\UserHttpRequets.cs" />
     <Compile Include="Utils\ValidateUserString.cs" />
+    <Compile Include="View\AllSendersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\AllSendersForm.Designer.cs">
+      <DependentUpon>AllSendersForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\AuthorizForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,6 +105,9 @@
     <Compile Include="View\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\AllSendersForm.resx">
+      <DependentUpon>AllSendersForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\AuthorizForm.resx">
       <DependentUpon>AuthorizForm.cs</DependentUpon>
     </EmbeddedResource>

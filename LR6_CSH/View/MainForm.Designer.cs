@@ -33,12 +33,13 @@
             this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pCurrentUserInfo = new System.Windows.Forms.Panel();
             this.lbStatus = new System.Windows.Forms.Label();
-            this.lbName = new System.Windows.Forms.Label();
+            this.lbUserName = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lbInitial = new System.Windows.Forms.Label();
+            this.lBoxMessages = new System.Windows.Forms.ListBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btSent = new System.Windows.Forms.Button();
             this.tbUserMessage = new System.Windows.Forms.TextBox();
-            this.tbMessages = new System.Windows.Forms.TextBox();
             this.pActiveUsers.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAllUsers)).BeginInit();
             this.pCurrentUserInfo.SuspendLayout();
@@ -59,6 +60,10 @@
             // 
             // dgvAllUsers
             // 
+            this.dgvAllUsers.AllowUserToAddRows = false;
+            this.dgvAllUsers.AllowUserToDeleteRows = false;
+            this.dgvAllUsers.AllowUserToResizeColumns = false;
+            this.dgvAllUsers.AllowUserToResizeRows = false;
             this.dgvAllUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvAllUsers.BackgroundColor = System.Drawing.Color.PeachPuff;
             this.dgvAllUsers.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -76,7 +81,8 @@
             this.dgvAllUsers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvAllUsers.Size = new System.Drawing.Size(235, 404);
             this.dgvAllUsers.TabIndex = 1;
-            this.dgvAllUsers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAllUsers_CellClick);
+            this.dgvAllUsers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DGVAllUsers_CellClick);
+            this.dgvAllUsers.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAllUsers_CellLeave);
             // 
             // Login
             // 
@@ -91,7 +97,7 @@
             this.pCurrentUserInfo.BackColor = System.Drawing.Color.Cornsilk;
             this.pCurrentUserInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pCurrentUserInfo.Controls.Add(this.lbStatus);
-            this.pCurrentUserInfo.Controls.Add(this.lbName);
+            this.pCurrentUserInfo.Controls.Add(this.lbUserName);
             this.pCurrentUserInfo.Dock = System.Windows.Forms.DockStyle.Top;
             this.pCurrentUserInfo.Location = new System.Drawing.Point(0, 0);
             this.pCurrentUserInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -110,25 +116,49 @@
             this.lbStatus.TabIndex = 1;
             this.lbStatus.Text = "Online";
             // 
-            // lbName
+            // lbUserName
             // 
-            this.lbName.AutoSize = true;
-            this.lbName.Location = new System.Drawing.Point(4, 9);
-            this.lbName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbName.Name = "lbName";
-            this.lbName.Size = new System.Drawing.Size(51, 20);
-            this.lbName.TabIndex = 0;
-            this.lbName.Text = "Login";
+            this.lbUserName.AutoSize = true;
+            this.lbUserName.Location = new System.Drawing.Point(4, 9);
+            this.lbUserName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbUserName.Name = "lbUserName";
+            this.lbUserName.Size = new System.Drawing.Size(51, 20);
+            this.lbUserName.TabIndex = 0;
+            this.lbUserName.Text = "Login";
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.LightGoldenrodYellow;
-            this.panel1.Controls.Add(this.tbMessages);
+            this.panel1.Controls.Add(this.lbInitial);
+            this.panel1.Controls.Add(this.lBoxMessages);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(235, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(302, 480);
+            this.panel1.Size = new System.Drawing.Size(302, 426);
             this.panel1.TabIndex = 1;
+            // 
+            // lbInitial
+            // 
+            this.lbInitial.AutoSize = true;
+            this.lbInitial.Location = new System.Drawing.Point(80, 215);
+            this.lbInitial.Name = "lbInitial";
+            this.lbInitial.Size = new System.Drawing.Size(149, 20);
+            this.lbInitial.TabIndex = 2;
+            this.lbInitial.Text = "Choose the person";
+            // 
+            // lBoxMessages
+            // 
+            this.lBoxMessages.BackColor = System.Drawing.Color.LightGoldenrodYellow;
+            this.lBoxMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lBoxMessages.Font = new System.Drawing.Font("Segoe UI Symbol", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lBoxMessages.FormattingEnabled = true;
+            this.lBoxMessages.ItemHeight = 15;
+            this.lBoxMessages.Location = new System.Drawing.Point(0, 0);
+            this.lBoxMessages.Name = "lBoxMessages";
+            this.lBoxMessages.Size = new System.Drawing.Size(302, 426);
+            this.lBoxMessages.TabIndex = 1;
+            this.lBoxMessages.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lBoxMessages_DrawItem);
+            this.lBoxMessages.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.lBoxMessages_MeasureItem);
             // 
             // panel2
             // 
@@ -136,9 +166,9 @@
             this.panel2.Controls.Add(this.btSent);
             this.panel2.Controls.Add(this.tbUserMessage);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(235, 321);
+            this.panel2.Location = new System.Drawing.Point(235, 426);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(302, 159);
+            this.panel2.Size = new System.Drawing.Size(302, 54);
             this.panel2.TabIndex = 2;
             // 
             // btSent
@@ -163,30 +193,17 @@
             this.tbUserMessage.Location = new System.Drawing.Point(0, 0);
             this.tbUserMessage.Multiline = true;
             this.tbUserMessage.Name = "tbUserMessage";
-            this.tbUserMessage.Size = new System.Drawing.Size(249, 159);
+            this.tbUserMessage.Size = new System.Drawing.Size(249, 54);
             this.tbUserMessage.TabIndex = 0;
             this.tbUserMessage.Text = "type a message...";
-            this.tbUserMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbUserMessage_KeyDown);
-            // 
-            // tbMessages
-            // 
-            this.tbMessages.BackColor = System.Drawing.Color.LightGoldenrodYellow;
-            this.tbMessages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbMessages.Location = new System.Drawing.Point(0, 0);
-            this.tbMessages.Multiline = true;
-            this.tbMessages.Name = "tbMessages";
-            this.tbMessages.Size = new System.Drawing.Size(302, 480);
-            this.tbMessages.TabIndex = 0;
-            this.tbMessages.Text = "\r\n\r\n\r\nChoose the person ";
-            this.tbMessages.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 480);
-            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.pActiveUsers);
             this.Font = new System.Drawing.Font("Segoe UI Symbol", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -211,12 +228,13 @@
         private System.Windows.Forms.DataGridView dgvAllUsers;
         private System.Windows.Forms.Panel pCurrentUserInfo;
         private System.Windows.Forms.Label lbStatus;
-        private System.Windows.Forms.Label lbName;
+        private System.Windows.Forms.Label lbUserName;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox tbUserMessage;
         private System.Windows.Forms.Button btSent;
         private System.Windows.Forms.DataGridViewTextBoxColumn Login;
-        private System.Windows.Forms.TextBox tbMessages;
+        private System.Windows.Forms.ListBox lBoxMessages;
+        private System.Windows.Forms.Label lbInitial;
     }
 }
