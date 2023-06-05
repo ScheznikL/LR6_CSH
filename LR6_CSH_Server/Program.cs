@@ -30,7 +30,7 @@ namespace LR6_CSH_Server
 
                 // Specify the authentication delegate.
 
-               // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous | AuthenticationSchemes.Basic;
+                // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous | AuthenticationSchemes.Basic;
 
                 //httpListener.AuthenticationSchemeSelectorDelegate = 
                 //    new AuthenticationSchemeSelector(AuthenticationSchemeForClient);
@@ -45,29 +45,27 @@ namespace LR6_CSH_Server
             }
         }
 
-        static AuthenticationSchemes AuthenticationSchemeForClient(HttpListenerRequest request)
-        {
-            Console.WriteLine("Client authentication protocol selection in progress...");
-            // Do not authenticate local machine requests.
+        //static AuthenticationSchemes AuthenticationSchemeForClient(HttpListenerRequest request)
+        //{
+        //    Console.WriteLine("Client authentication protocol selection in progress...");
+        //    // Do not authenticate local machine requests.
 
-            var res1 = request.IsAuthenticated;
-            var res2 = request.GetClientCertificate();
-
-            var res3 = request.ClientCertificateError;
-            //////
-            if (request.RemoteEndPoint.Address.Equals(IPAddress.Broadcast) || request.IsLocal)
-            {
-                return AuthenticationSchemes.None;
-            }
-            else
-            {
-                return AuthenticationSchemes.Basic;
-            }
-        }
+        //    var res1 = request.IsAuthenticated;
+        //    var res2 = request.GetClientCertificate();
+        //    var res3 = request.ClientCertificateError;
+        //    if (request.RemoteEndPoint.Address.Equals(IPAddress.Broadcast) || request.IsLocal)
+        //    {
+        //        return AuthenticationSchemes.None;
+        //    }
+        //    else
+        //    {
+        //        return AuthenticationSchemes.Basic;
+        //    }
+        //}
 
         public static async Task ProcessRequestAsync(HttpListenerContext context)
         {
-            DisplayWebHeaderCollection(context.Request); //WHO
+            DisplayWebHeaderCollection(context.Request); 
 
             if (context.Request.HttpMethod == "POST" && context.Request.Url.AbsolutePath == "/reg-user")
             {
@@ -81,16 +79,9 @@ namespace LR6_CSH_Server
                         {
                             string json = reader.ReadToEnd();
                             await JSONOrganaizer.DeserializeUsersFromStringToFile(json, token);
-                            //Thread.Sleep(3000);
                             context.Response.StatusCode = 200;
-                            //after = UserOnServer.UsersOnServer.Count;
                         }
                     }
-                    //if(countbefore != after)
-                    //{
-                       
-                  //  }
-                    
                 }
                 catch (OperationCanceledException)
                 {
@@ -100,30 +91,25 @@ namespace LR6_CSH_Server
                 catch (Exception ex)
                 {
                     Console.WriteLine("An error occurred while processing reg-user request: " + ex.Message);
-                    Console.ReadLine();
                     context.Response.StatusCode = 500;
                 }
                 finally
                 {
                     context.Response.Close();
-                    // Console.ReadLine();
                 }
             }
             else if (context.Request.HttpMethod == "GET" && context.Request.Url.AbsolutePath == "/get-users")
             {
                 try
                 {
-                    //string jsonResponse = JsonSerializer.Serialize(UserOnServer.UsersOnServer);
                     if (UserOnServer.UsersPack.Count > 1)
                     {
                         string jsonResponse = JsonSerializer.Serialize(UserOnServer.UsersPack);
                         byte[] responseBytes = Encoding.UTF8.GetBytes(jsonResponse);
-
                         context.Response.StatusCode = 200;
                         context.Response.ContentType = "application/json";
                         context.Response.ContentEncoding = Encoding.UTF8;
                         context.Response.ContentLength64 = responseBytes.Length;
-
                         context.Response.OutputStream.Write(responseBytes, 0, responseBytes.Length);
                     }
                     else
@@ -141,7 +127,6 @@ namespace LR6_CSH_Server
                 finally
                 {
                     context.Response.Close();
-                    // Console.ReadLine();
                 }
             }
             else if (context.Request.HttpMethod == "POST" && context.Request.Url.AbsolutePath == "/send-message")
@@ -157,21 +142,11 @@ namespace LR6_CSH_Server
                             UserMessage message = new UserMessage(userFromResponse.Login,
                                                                   userFromResponse.Resiver,
                                                                   $"[{DateTime.Now.ToShortTimeString()}]|{userFromResponse.Login}|\n{ userFromResponse.Message }");
-                            // lock (UserMessage.Locker)
-                            {
-                                // UserMessage.UserMessages.Add(message);
-                            }
-                            Console.WriteLine($"User {userFromResponse.Login} message was recieved by server.");
 
+                            Console.WriteLine($"User {userFromResponse.Login} message was recieved by server.");
                         }
                     }
                     context.Response.StatusCode = 200;
-                }
-                catch (HttpListenerException winsevEx)
-                {
-                    Console.WriteLine("An WINDOWS 7 Unfortunatelly ad ** using staff" + winsevEx.Message);
-                    Console.ReadLine();
-                    context.Response.StatusCode = 500;
                 }
                 catch (Exception ex)
                 {
@@ -181,7 +156,6 @@ namespace LR6_CSH_Server
                 finally
                 {
                     context.Response.Close();
-                    // Console.ReadLine();
                 }
             }
             else if (context.Request.HttpMethod == "GET" && context.Request.Url.AbsolutePath == "/get-messages")
@@ -194,12 +168,10 @@ namespace LR6_CSH_Server
                     {
                         string jsonAnswer = JsonSerializer.Serialize(UserOnServer.UsersPack);
                         byte[] responseBytes = Encoding.UTF8.GetBytes(jsonAnswer);
-
                         context.Response.StatusCode = 200;
                         context.Response.ContentType = "application/json";
                         context.Response.ContentEncoding = Encoding.UTF8;
                         context.Response.ContentLength64 = responseBytes.Length;
-
                         context.Response.OutputStream.Write(responseBytes, 0, responseBytes.Length);
                         UserMessage.ClearePotentiallyReadMes(token);
                     }
@@ -212,13 +184,12 @@ namespace LR6_CSH_Server
                 catch (Exception ex)
                 {
                     Console.WriteLine("An error occurred while processing get-messages request: " + ex.Message);
-                    
+
                     context.Response.StatusCode = 500;
                 }
                 finally
                 {
                     context.Response.Close();
-                    // Console.ReadLine();
                 }
             }
             else if (context.Request.HttpMethod == "POST" && context.Request.Url.AbsolutePath == "/auth-user")
@@ -240,12 +211,10 @@ namespace LR6_CSH_Server
                     {
                         string jsonResponse = JsonSerializer.Serialize(UserOnServer.UsersOnServer);
                         byte[] responseBytes = Encoding.UTF8.GetBytes(jsonResponse);
-
                         context.Response.StatusCode = 200;
                         context.Response.ContentType = "application/json";
                         context.Response.ContentEncoding = Encoding.UTF8;
                         context.Response.ContentLength64 = responseBytes.Length;
-
                         context.Response.OutputStream.Write(responseBytes, 0, responseBytes.Length);
                         Console.WriteLine($"User {userFromResponse.Login} authoraized successfully.");
                     }
@@ -262,7 +231,6 @@ namespace LR6_CSH_Server
                 catch (Exception ex)
                 {
                     Console.WriteLine("An error occurred while processing auth-user request: " + ex.Message);
-                    Console.ReadLine();
                     context.Response.StatusCode = 500;
                 }
                 finally
@@ -273,19 +241,14 @@ namespace LR6_CSH_Server
             else
             {
                 context.Response.StatusCode = 404;
-                Console.WriteLine("Server send the 404 not found code\n");/*Type anthythig to continue...*/
+                Console.WriteLine("Server send the 404 not found code\n");
                 context.Response.Close();
-                // Console.ReadLine();
             }
         }
 
-
-        // Displays the header information that accompanied a request.
         public static void DisplayWebHeaderCollection(HttpListenerRequest request)
         {
             System.Collections.Specialized.NameValueCollection headers = request.Headers;
-            // Get each header and display each value.
-
             foreach (string key in headers.AllKeys)
             {
                 if (key == "Authorization")
@@ -297,7 +260,7 @@ namespace LR6_CSH_Server
                         {
                             var splited = value.Split(' ');
                             token = splited[1];
-                            Console.WriteLine("Token registred", value);
+                           // Console.WriteLine("Token registred", value);
                         }
                     }
                     else
@@ -308,24 +271,15 @@ namespace LR6_CSH_Server
             }
         }
 
-
-
         public async static Task Listen()
         {
-            StartServer();
-            //HttpListener listener = new HttpListener(); //up all
-            //listener.Prefixes.Add(prefix);
-            //listener.Start();
-
             var requests = new List<Task>();
-            // for (int i = 0; i < maxConcurrentRequests; i++)
+            StartServer();
             requests.Add(httpListener.GetContextAsync());
-
             while (true)
             {
                 Task t = await Task.WhenAny(requests);
                 requests.Remove(t);
-
                 if (t is Task<HttpListenerContext>)
                 {
                     var context = (t as Task<HttpListenerContext>).Result;

@@ -173,6 +173,9 @@ namespace LR6_CSH_Client.View
 
         private void DGVAllUsers_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            StoreListBoxItems();
+            lBoxMessages.Items.Clear();
+            GetUpdates();
             _previouslyRecievedFrom = "";
             CheckDictionary();
             tbUserMessage.Enabled = true;
@@ -183,18 +186,16 @@ namespace LR6_CSH_Client.View
 
         private void CheckDictionary()
         {
-            lBoxMessages.Items.Clear();
             var chosenU = _bs.Current as User;
             if (_listBIStorage.Count != 0)
             {
                 foreach (var k in _listBIStorage)
                 {
-
                     if (k.Key == chosenU.Login)
                     {
-                        foreach (var i in k.Value)
+                        for (int i = 0; i <= k.Value.Count - 1; i++) //
                         {
-                            UpdateListBox(i);
+                            UpdateListBox(k.Value[i]);
                         }
                     }
                 }
@@ -203,29 +204,24 @@ namespace LR6_CSH_Client.View
                     _listBIStorage.Remove(chosenU.Login);
                 }
             }
-            else if(UsersData.UserMessages.Count > 0)
-            {
-                GetUpdates();
-            }
         }
 
         private void StoreListBoxItems()
         {
-            var user = _bs.Current as User;
+            // var user = _bs.Current as User;
             if (lBoxMessages.Items.Count != 0 && dgvAllUsers.SelectedCells.Count != 0)
             {
-                if (!_listBIStorage.ContainsKey(user.Login))
+                if (!_listBIStorage.ContainsKey(userForSavingOldMessages.Login))
                 {
                     var savedMessages = new List<string>();
                     foreach (var item in lBoxMessages.Items)
                     {
                         savedMessages.Add(item.ToString());
                     }
-                    _listBIStorage.Add(user.Login, savedMessages);
+                    _listBIStorage.Add(userForSavingOldMessages.Login, savedMessages);
                 }
             }
         }
-
         private void GetUpdates()
         {
             var senderU = _bs.Current as User;
@@ -249,7 +245,6 @@ namespace LR6_CSH_Client.View
                 }
             }
         }
-
         private async void MainForm_Load(object sender, EventArgs e)
         {
             await Task.Run(() => GetUserDataAsync("get-users"));
@@ -257,7 +252,6 @@ namespace LR6_CSH_Client.View
             ClearUserNameFromDGV();
             await UserHttpRequets.PeriodicGetMessage(TimeSpan.FromSeconds(1), _client, backendUrl, _usersdata);
         }
-
         private async void btSent_Click(object sender, EventArgs e)
         {
             var reciever = _bs.Current as User;
@@ -272,7 +266,6 @@ namespace LR6_CSH_Client.View
             await PostUserMessage(userJsonWithMessage);
 
         }
-
         private async void GetUserDataAsync(string absolutePath)
         {
             var response = _client.GetAsync($"{backendUrl}/{absolutePath}").Result;
@@ -310,10 +303,18 @@ namespace LR6_CSH_Client.View
                 _httpStatusForTb = $"Sending error: {response.StatusCode}\n";
             }
         }
-
         private void dgvAllUsers_CellLeave(object sender, DataGridViewCellEventArgs e)
         {
-            StoreListBoxItems();
+            //StoreListBoxItems();
+            userForSavingOldMessages = _bs.Current as User;
+
         }
+
+        private void dgvAllUsers_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            //_previouslyRecievedFrom = "";
+            // CheckDictionary();
+        }
+        private static User userForSavingOldMessages;
     }
 }

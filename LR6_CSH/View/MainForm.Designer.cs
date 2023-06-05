@@ -82,6 +82,7 @@
             this.dgvAllUsers.Size = new System.Drawing.Size(235, 404);
             this.dgvAllUsers.TabIndex = 1;
             this.dgvAllUsers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DGVAllUsers_CellClick);
+            this.dgvAllUsers.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAllUsers_CellEnter);
             this.dgvAllUsers.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAllUsers_CellLeave);
             // 
             // Login
