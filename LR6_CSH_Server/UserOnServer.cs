@@ -9,11 +9,8 @@ namespace LR6_CSH_Server
 {
     class UserOnServer
     {
-        //private string _id;
         public static List<UserOnServer> UsersOnServer { get; set; } = new List<UserOnServer>();
         public static List<UserPack> UsersPack { get; set; } = new List<UserPack>();
-
-        // private string Id { get => _id; set => Guid.NewGuid().ToString(); }
         public string Password { get; set; }
         public string Login { get; set; }
         public string Token { get; set; }
@@ -28,27 +25,22 @@ namespace LR6_CSH_Server
             Token = token;
             Messages = new List<string>();
         }
-
         public static Task ConstructUsersOnServer(UserPack user, string token, ref CancellationTokenSource tokenSource, out CancellationToken ct)
         {
             ct = tokenSource.Token;
             var newUser = new UserOnServer(user.Password, user.Login, token);
             if (!UsersOnServer.Any(y => y.Login == user.Login))
             {
-                //lock (locker)
-                {
-                    UsersOnServer.Add(newUser);
-                    UsersPack.Add(new UserPack(newUser.Password, newUser.Login, newUser.Messages));
-                }
+                UsersOnServer.Add(newUser);
+                UsersPack.Add(new UserPack(newUser.Password, newUser.Login, newUser.Messages));
                 Console.WriteLine($"Data of user {user.Login} received successfully.");
                 return Task.CompletedTask;
             }
             else
-            {                
+            {
                 Console.WriteLine($"User {user.Login} already exist.");
                 tokenSource.Cancel();
                 return Task.FromCanceled(ct);
-                //throw new ArgumentException($"User {user.Login} already exist.");
             }
         }
         public static int CheckUsersPerenceAndPassword(UserPack user)
@@ -56,7 +48,7 @@ namespace LR6_CSH_Server
             var foundUser = UsersOnServer.FirstOrDefault(x => x.Login == user.Login);
             if (foundUser != default(UserOnServer) || foundUser != null)
             {
-                if(foundUser.Password == user.Password)
+                if (foundUser.Password == user.Password)
                 {
                     return 200;
                 }

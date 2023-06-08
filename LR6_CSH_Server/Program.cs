@@ -1,6 +1,4 @@
-﻿//#define TRACE
-using System;
-using System.Threading;
+﻿using System;
 using System.Net;
 using System.Text;
 using System.IO;
@@ -12,9 +10,9 @@ namespace LR6_CSH_Server
 {
     class Program
     {
-
         private static HttpListener httpListener;
         private static string token;
+
         static void Main()
         {
             FileConfig.ReadUserInfo();
@@ -26,13 +24,15 @@ namespace LR6_CSH_Server
             try
             {
                 httpListener = new HttpListener();
-                httpListener.Prefixes.Add("http://*:8080/");
+                //httpListener.Prefixes.Add("http://10.0.2.15:8080/");
+                httpListener.Prefixes.Add("http://localhost:8080/");
+                //httpListener.Prefixes.Add("http://192.168.56.1:8081/");
 
                 // Specify the authentication delegate.
 
                 // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous | AuthenticationSchemes.Basic;
 
-                //httpListener.AuthenticationSchemeSelectorDelegate = 
+                //httpListener.AuthenticationSchemeSelectorDelegate =
                 //    new AuthenticationSchemeSelector(AuthenticationSchemeForClient);
 
                 httpListener.Start();
@@ -45,27 +45,27 @@ namespace LR6_CSH_Server
             }
         }
 
-        //static AuthenticationSchemes AuthenticationSchemeForClient(HttpListenerRequest request)
-        //{
-        //    Console.WriteLine("Client authentication protocol selection in progress...");
-        //    // Do not authenticate local machine requests.
-
-        //    var res1 = request.IsAuthenticated;
-        //    var res2 = request.GetClientCertificate();
-        //    var res3 = request.ClientCertificateError;
-        //    if (request.RemoteEndPoint.Address.Equals(IPAddress.Broadcast) || request.IsLocal)
-        //    {
-        //        return AuthenticationSchemes.None;
-        //    }
-        //    else
-        //    {
-        //        return AuthenticationSchemes.Basic;
-        //    }
-        //}
+        static AuthenticationSchemes AuthenticationSchemeForClient(HttpListenerRequest request)
+        {
+            Console.WriteLine("Client authentication protocol selection in progress...");
+            // Do not authenticate local machine requests.
+            return AuthenticationSchemes.None;
+            //var res1 = request.IsAuthenticated;
+            //var res2 = request.GetClientCertificate();
+            //var res3 = request.ClientCertificateError;
+            //if (request.RemoteEndPoint.Address.Equals(IPAddress.Broadcast) || request.IsLocal)
+            //{
+            //    return AuthenticationSchemes.None;
+            //}
+            //else
+            //{
+            //    return AuthenticationSchemes.Basic;
+            //}
+        }
 
         public static async Task ProcessRequestAsync(HttpListenerContext context)
         {
-            DisplayWebHeaderCollection(context.Request); 
+            ComposeUserTokenFromHeader(context.Request); 
 
             if (context.Request.HttpMethod == "POST" && context.Request.Url.AbsolutePath == "/reg-user")
             {
@@ -245,8 +245,7 @@ namespace LR6_CSH_Server
                 context.Response.Close();
             }
         }
-
-        public static void DisplayWebHeaderCollection(HttpListenerRequest request)
+        public static void ComposeUserTokenFromHeader(HttpListenerRequest request)
         {
             System.Collections.Specialized.NameValueCollection headers = request.Headers;
             foreach (string key in headers.AllKeys)
@@ -260,7 +259,6 @@ namespace LR6_CSH_Server
                         {
                             var splited = value.Split(' ');
                             token = splited[1];
-                           // Console.WriteLine("Token registred", value);
                         }
                     }
                     else
@@ -270,7 +268,6 @@ namespace LR6_CSH_Server
                 }
             }
         }
-
         public async static Task Listen()
         {
             var requests = new List<Task>();
@@ -288,7 +285,5 @@ namespace LR6_CSH_Server
                 }
             }
         }
-
-
     }
 }

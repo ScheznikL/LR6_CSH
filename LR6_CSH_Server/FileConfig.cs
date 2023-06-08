@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace LR6_CSH_Server
 {
@@ -16,7 +11,7 @@ namespace LR6_CSH_Server
 
         public static void ReadUserInfo()
         {
-            filepath = $"{CreateDirictoryIfNotExist()}\\userData2.json"; //NEW
+            filepath = $"{CreateDirictoryIfNotExist()}\\userData2.json";
             if (File.Exists(filepath))
             {
                 var fileInfo = new FileInfo(filepath);
@@ -29,7 +24,7 @@ namespace LR6_CSH_Server
                     else
                     {
                         Console.WriteLine($"Server gets users info.");
-                    }                    
+                    }
                 }
                 else
                 {
@@ -41,9 +36,7 @@ namespace LR6_CSH_Server
                 File.Create(filepath);
                 Console.WriteLine($"File:{filepath} created.");
             }
-
         }
-
         private static string CreateDirictoryIfNotExist()
         {
             if (!Directory.Exists($@"{currentDir}\UserBase)"))
@@ -53,7 +46,6 @@ namespace LR6_CSH_Server
             filepath = $@"{currentDir}\UserBase";
             return filepath;
         }
-
         public static void UpdateJSONfile(CancellationToken ct)
         {
             if (!ct.IsCancellationRequested)
@@ -69,6 +61,5 @@ namespace LR6_CSH_Server
                 }
             }
         }
-
     }
 }

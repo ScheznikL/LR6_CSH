@@ -82,7 +82,6 @@
     <Compile Include="Controls\UsersData.cs" />
     <Compile Include="Model\Messages.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="Utils\SerializeJSON.cs" />
     <Compile Include="Utils\UserHttpRequets.cs" />
     <Compile Include="Utils\ValidateUserString.cs" />
     <Compile Include="View\AllSendersForm.cs">

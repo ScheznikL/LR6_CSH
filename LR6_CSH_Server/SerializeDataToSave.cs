@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
-//using System.Text.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,7 +27,6 @@ namespace LR6_CSH_Server
                 Console.WriteLine($"Serialization error occured: {ex}");
             }
         }
-
         public static bool DeserializeUsersFromFile(string filePath)
         {
             if (string.IsNullOrEmpty(filePath)) return false;
@@ -48,7 +46,6 @@ namespace LR6_CSH_Server
                 return false;
             }
         }
-
         private static void AdaptForUserPack()
         {
             foreach (var user in UserOnServer.UsersOnServer)
@@ -64,37 +61,12 @@ namespace LR6_CSH_Server
             }
             Console.WriteLine($"UsersPack filled with data, Count:{UserOnServer.UsersPack.Count}");
         }
-
         public static async Task DeserializeUsersFromStringToFile(string response, string token)
         {
             try
             {
-                //ct = tokenSource.Token; 
                 if (string.IsNullOrEmpty(response)) return;
-
                 Task<UserPack> taskA = Task.Run(() => JsonConvert.DeserializeObject<UserPack>(response));
-                //var user =  JsonConvert.DeserializeObject<UserPack>(response);
-                // Execute the continuation when the antecedent finishes.
-
-                //Task.Run(()=>UserOnServer.ConstructUsersOnServer(user, token, ref tokenSource, out ct), ct).
-                //    ContinueWith(delegate { FileConfig.UpdateJSONfile(ct); }, ct, TaskContinuationOptions.ExecuteSynchronously).
-                //    ContinueWith(delegate
-                //    {
-                //        try
-                //        {
-                //            if (ct.IsCancellationRequested)
-                //            {
-                //                ct.ThrowIfCancellationRequested();
-                //            }
-                //        }
-                //        catch
-                //        {
-                //            throw;
-                //        }
-
-                //    }, TaskContinuationOptions.ExecuteSynchronously);
-
-
                 await taskA.
                     ContinueWith(delegate { UserOnServer.ConstructUsersOnServer(taskA.Result, token, ref tokenSource, out ct); },
                     ct, TaskContinuationOptions.ExecuteSynchronously).
@@ -120,18 +92,6 @@ namespace LR6_CSH_Server
                 Console.WriteLine($"Code forbidden sent to {token}");
                 throw;
             }
-
-            //await taskA.
-            //    ContinueWith(antecedent => Task.Run(() => UserOnServer.ConstructUsersOnServer(taskA.Result, token, ref tokenSource, out ct)).
-            //    ContinueWith(lasttask => FileConfig.UpdateJSONfile(ct))).
-            //    ContinueWith(check =>
-            //    {
-            //        if (ct.IsCancellationRequested)
-            //        {
-            //            ct.ThrowIfCancellationRequested();
-            //        }
-            //    });
-
         }
     }
 }

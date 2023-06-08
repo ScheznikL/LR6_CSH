@@ -18,25 +18,26 @@ namespace LR6_CSH_Client.View
 {
     public partial class MainForm : Form
     {
+        private static User userForSavingOldMessages;
         private event Action<string> CreateMessageForm;
         private SolidBrush reportsForegroundBrushSelected = new SolidBrush(Color.FromKnownColor(KnownColor.PaleGoldenrod));
         private SolidBrush reportsForegroundBrush = new SolidBrush(Color.Black);
         private SolidBrush reportsBackgroundBrushSelected = new SolidBrush(Color.FromKnownColor(KnownColor.LightGoldenrodYellow));
         private SolidBrush reportsBackgroundEven = new SolidBrush(Color.FromKnownColor(KnownColor.LightGoldenrodYellow));
         private SolidBrush reportsBackgroundNotEven = new SolidBrush(Color.Bisque);
-
         private UsersData _usersdata = new UsersData();
         private HttpClient _client;
         private bool _regFlag;
         private int setIncreaseHeight = 25;
+        //public string backendUrl = "http://192.168.56.1:8081";
         //public string backendUrl = "http://192.168.43.23:8080";
         public string backendUrl = "http://localhost:8080";
+        //public string backendUrl = "http://10.0.2.15:8080";
         public string _previouslyRecievedFrom = "";
         private BindingSource _bs = new BindingSource();
         private string _httpStatusForTb = "";
         private Dictionary<string, List<string>> _listBIStorage = new Dictionary<string, List<string>>();
-
-        PacketBuilder _user;
+        private PacketBuilder _user;
 
         public MainForm(UsersData _users, ref HttpClient client, bool regFlag, PacketBuilder user)
         {
@@ -49,14 +50,12 @@ namespace LR6_CSH_Client.View
             _bs.DataSource = _usersdata.Userslist;
             dgvAllUsers.DataSource = _bs;
             _user = user;
-
             tbUserMessage.Enabled = false;
             lbUserName.Text = _user.UserFromPack.Login;
             UsersData.UserMessages.CollectionChanged += UserMessages_CollectionChanged;
             lBoxMessages.DrawMode = DrawMode.OwnerDrawVariable;
             CreateMessageForm += OnCreateMessageDialog;
         }
-
         private void OnCreateMessageDialog(string messageSender)
         {
             Task.Run(() =>
@@ -89,7 +88,6 @@ namespace LR6_CSH_Client.View
                 lBoxMessages.TopIndex = lBoxMessages.Items.Count - 1;
             }
         }
-
         private void lBoxMessages_MeasureItem(object sender, MeasureItemEventArgs e)
         {
             /* if (e.Index % 2 == 0) e.ItemHeight += setIncreaseHeight;*///Set the Height of the item at index 2 to 50
@@ -99,7 +97,6 @@ namespace LR6_CSH_Client.View
         private void lBoxMessages_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
-            //e.Graphics.DrawString(le.ItemHeight += setIncreaseHeightBoxMessages.Items[e.Index].ToString(), e.Font, new SolidBrush(e.ForeColor), e.Bounds);
             bool selected = (e.State == DrawItemState.Selected);
 
             int index = e.Index;
@@ -119,13 +116,11 @@ namespace LR6_CSH_Client.View
 
                 //text:
                 SolidBrush foregroundBrush = (selected) ? reportsForegroundBrushSelected : reportsForegroundBrush;
-                //  g.DrawString(lBoxMessages.Items[e.Index].ToString(), e.Font, foregroundBrush, lBoxMessages.GetItemRectangle(index).Location);
                 e.Graphics.DrawString(lBoxMessages.Items[e.Index].ToString(), e.Font, new SolidBrush(e.ForeColor), e.Bounds);
             }
 
             e.DrawFocusRectangle();
         }
-
         private void UserMessages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             List<int> indexes = new List<int>();
@@ -157,7 +152,6 @@ namespace LR6_CSH_Client.View
                 }
             }
         }
-
         private void ClearUserNameFromDGV()
         {
             SaveCurrentUserToUserData(_usersdata);
@@ -165,12 +159,10 @@ namespace LR6_CSH_Client.View
             _bs.ResetBindings(false);
             ClearSelection();
         }
-
         private void SaveCurrentUserToUserData(UsersData users)
         {
             UsersData.CurrentUser = _user.UserFromPack;
         }
-
         private void DGVAllUsers_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             StoreListBoxItems();
@@ -183,7 +175,6 @@ namespace LR6_CSH_Client.View
             lbInitial.Visible = false;
             lBoxMessages.Visible = true;
         }
-
         private void CheckDictionary()
         {
             var chosenU = _bs.Current as User;
@@ -205,7 +196,6 @@ namespace LR6_CSH_Client.View
                 }
             }
         }
-
         private void StoreListBoxItems()
         {
             // var user = _bs.Current as User;
@@ -309,12 +299,10 @@ namespace LR6_CSH_Client.View
             userForSavingOldMessages = _bs.Current as User;
 
         }
-
         private void dgvAllUsers_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             //_previouslyRecievedFrom = "";
             // CheckDictionary();
         }
-        private static User userForSavingOldMessages;
     }
 }

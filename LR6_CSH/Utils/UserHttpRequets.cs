@@ -1,8 +1,5 @@
 ﻿using System;
 using LR6_CSH_Client.Controls;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Windows.Forms;
@@ -14,23 +11,26 @@ namespace LR6_CSH_Client.Utils
     {
         static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-
         public static async Task PeriodicGetMessage(TimeSpan interval, HttpClient client, string backendUrl, UsersData userD)
         {
             var ct = tokenSource.Token;
             while (!tokenSource.IsCancellationRequested)
             {
-                //if (!cancellationToken.IsCancellationRequested)
-                await Task.Run(() => GettingMessages(client, backendUrl, userD));
-                await Task.Delay(interval, ct);
+                try
+                {
+                    await Task.Run(() => GettingMessages(client, backendUrl, userD));
+                    await Task.Delay(interval, ct);
+                }
+                catch (Exception ex)
+                {
+                    tokenSource.Cancel();
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
-
-        public static async void GettingMessages(HttpClient client, string backendUrl, UsersData userD) //
+        public static async void GettingMessages(HttpClient client, string backendUrl, UsersData userD)
         {
             var response = client.GetAsync($"{backendUrl}/get-messages").Result;
-            //ConfigureAwait(false); // for thisfunc go to another thread
-
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
                 return;
@@ -40,8 +40,6 @@ namespace LR6_CSH_Client.Utils
                 string json = await response.Content.ReadAsStringAsync();
                 UsersData.AddRecievedMessages(json);
             }
-            //else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-            //{ }
             else
             {
                 tokenSource.Cancel();
@@ -49,5 +47,6 @@ namespace LR6_CSH_Client.Utils
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        //public static 
     }
 }

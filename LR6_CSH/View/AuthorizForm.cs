@@ -2,17 +2,11 @@
 using LR6_CSH_Client.Controls;
 using LR6_CSH_Client.Utils;
 using LR6_CSH_Client.View;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.Json;
 using System.Net;
 using System.Threading;
 using System.Net.Http.Headers;
@@ -22,8 +16,10 @@ namespace LR6_CSH_Client
     public partial class AuthorizForm : Form
     {
         public HttpClient client = new HttpClient();
+        //public string backendUrl = "http://10.0.2.15:8080";
         public string backendUrl = "http://localhost:8080";
         //public string backendUrl = "http://192.168.43.23:8080";
+        //public string backendUrl = "http://192.168.56.1:8081";
         private UsersData _users;
         private PacketBuilder _userpack;
         CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -36,20 +32,19 @@ namespace LR6_CSH_Client
             InitializeComponent();
             _users = new UsersData();
         }
-
         private void btLogIn_Click(object sender, EventArgs e)
         {
             if (ValidateUserString.CellValidatingForLetterWithSpases(tbLogin, tbPassword))
             {
+                tokenSource = new CancellationTokenSource();
                 ct = tokenSource.Token;
                 try
                 {
                     if (flagcreateonce)
                     {
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                            "Basic",/* Convert.ToBase64String(
-                        Encoding.ASCII.GetBytes(*/
-                            $"{tbLogin.Text}:{tbPassword.Text}"   /*))*/);
+                            "Basic",
+                            $"{tbLogin.Text}:{tbPassword.Text}");
                         flagcreateonce = false;
                     }
                     _userpack = new PacketBuilder(tbPassword.Text, tbLogin.Text);
@@ -66,6 +61,7 @@ namespace LR6_CSH_Client
         {
             if (ValidateUserString.CellValidatingForLetterWithSpases(tbLogin, tbPassword))
             {
+                tokenSource = new CancellationTokenSource();
                 ct = tokenSource.Token;
                 try
                 {
@@ -85,7 +81,6 @@ namespace LR6_CSH_Client
                 }
             }
         }
-
         private Task SentLogInRequest(PacketBuilder userpack, CancellationToken ct)
         {
             try
@@ -137,7 +132,6 @@ namespace LR6_CSH_Client
         }
         private void SentRegisterRequest(PacketBuilder userpack, CancellationToken ct)
         {
-
             var content = new StringContent(userpack.Userjson, Encoding.UTF8, "application/json");
             var response = client.PostAsync($"{backendUrl}/reg-user", content).Result;
 
@@ -173,7 +167,6 @@ namespace LR6_CSH_Client
                 ct.ThrowIfCancellationRequested();
             }
         }
-
         private void OpenMainForm(TaskStatus stat, bool regFlag)
         {
             if (stat != TaskStatus.Canceled || stat != TaskStatus.Faulted)
@@ -181,7 +174,6 @@ namespace LR6_CSH_Client
                 MainForm mainform = new MainForm(_users, ref client, regFlag, _userpack);
                 Size = new Size(553, 518);
                 panelMainWin.Dock = DockStyle.Fill;
-
                 mainform.TopLevel = false;
                 mainform.FormBorderStyle = FormBorderStyle.None;
                 mainform.Dock = DockStyle.Fill;
@@ -192,17 +184,14 @@ namespace LR6_CSH_Client
                 mainform.Show();
             }
         }
-
         private void AuthorizForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             tokenSource.Dispose();
         }
-
         private void tbLogin_TextChanged(object sender, EventArgs e)
         {
             tbLogin.BackColor = Color.White;
         }
-
         private void checkBox_CheckedChanged(object sender, EventArgs e)
         {
             tbPassword.PasswordChar = checkBox.Checked ? '\0' : '*';

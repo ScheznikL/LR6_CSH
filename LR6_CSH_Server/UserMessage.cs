@@ -8,14 +8,12 @@ namespace LR6_CSH_Server
 {
     class UserMessage
     {
-        //public static List<UserMessage> UserMessages { get; set; } = new List<UserMessage>();
         public string SenderLogin { get; set; }
         public string RecieverLogin { get; set; }
         public string Message { get; set; }
         public static object Locker = new object();
 
         public UserMessage() { }
-
         public UserMessage(string senderLogin, string recieverLogin, string message)
         {
             SenderLogin = senderLogin;
@@ -23,7 +21,6 @@ namespace LR6_CSH_Server
             Message = message;
             AdaptToUserOnServer();
         }
-
         private void AdaptToUserOnServer()
         {
             foreach (var user in UserOnServer.UsersOnServer)
@@ -34,7 +31,6 @@ namespace LR6_CSH_Server
                 }
             }
         }
-
         public static bool FindMessages(string usertoken)
         {
             var userWithMessages = UserOnServer.UsersOnServer.Where(x => x.Token == usertoken && x.Messages.Count > 0).FirstOrDefault();
@@ -48,7 +44,6 @@ namespace LR6_CSH_Server
                 return false;
             }
         }
-
         private static void PreparePack(string usertoken, List<string> messages)
         {
             if(!UserOnServer.UsersPack.Where(x => $"{x.Login}:{x.Password}" == usertoken).FirstOrDefault().Messages.Equals(messages))
@@ -56,7 +51,6 @@ namespace LR6_CSH_Server
                 UserOnServer.UsersPack.Where(x => $"{x.Login}:{x.Password}" == usertoken).FirstOrDefault().Messages.AddRange(messages);
             }
         }
-
         public static void ClearePotentiallyReadMes(string usertoken)
         {
             var userWithMessages = UserOnServer.UsersOnServer.Where(x => x.Token == usertoken && x.Messages.Count > 0).FirstOrDefault();
