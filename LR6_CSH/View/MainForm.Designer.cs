@@ -210,6 +210,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.ShowIcon = false;
+            this.Text = "Your Chats";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.pActiveUsers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAllUsers)).EndInit();

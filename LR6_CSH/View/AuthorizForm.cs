@@ -196,5 +196,9 @@ namespace LR6_CSH_Client
         {
             tbPassword.PasswordChar = checkBox.Checked ? '\0' : '*';
         }
+        private void tbPassword_TextChanged(object sender, EventArgs e)
+        {
+            tbPassword.BackColor = Color.White;
+        }
     }
 }

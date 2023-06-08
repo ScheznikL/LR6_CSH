@@ -8,7 +8,7 @@ namespace LR6_CSH_Client.Utils
     {
         public static bool CellValidatingForLetterWithSpases(TextBox login, MaskedTextBox password)
         {
-            if (HasSpecialCharsOrSpaces(login.Text))
+            if (HasSpecialChars(login.Text) || string.IsNullOrWhiteSpace(login.Text) || string.IsNullOrEmpty(login.Text))
             {
                 login.BackColor = Color.FromKnownColor(KnownColor.LightSalmon);
                 MessageBox.Show("Login shouldn't contain spases, or any spesial character.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -35,7 +35,7 @@ namespace LR6_CSH_Client.Utils
             return true;
         }
        
-        private static bool HasSpecialCharsOrSpaces(string str)
+        private static bool HasSpecialChars(string str)
         {
             return str.Any(ch => !char.IsLetter(ch) && !char.IsDigit(ch));
         }

@@ -205,8 +205,7 @@ namespace LR6_CSH_Server
                             userFromResponse = JsonSerializer.Deserialize<UserPack>(json);
                         }
                     }
-
-                    var isPresent = UserOnServer.CheckUsersPerenceAndPassword(userFromResponse);
+                    var isPresent = UserOnServer.CheckUsersPerenceAndPassword(userFromResponse, token);
                     if (isPresent == 200)
                     {
                         string jsonResponse = JsonSerializer.Serialize(UserOnServer.UsersOnServer);
@@ -224,9 +223,8 @@ namespace LR6_CSH_Server
                     }
                     else
                     {
-                        context.Response.StatusCode = 401;
+                        context.Response.StatusCode = 404;
                     }
-
                 }
                 catch (Exception ex)
                 {

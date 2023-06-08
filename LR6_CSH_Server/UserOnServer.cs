@@ -43,7 +43,7 @@ namespace LR6_CSH_Server
                 return Task.FromCanceled(ct);
             }
         }
-        public static int CheckUsersPerenceAndPassword(UserPack user)
+        public static int CheckUsersPerenceAndPassword(UserPack user, string token)
         {
             var foundUser = UsersOnServer.FirstOrDefault(x => x.Login == user.Login);
             if (foundUser != default(UserOnServer) || foundUser != null)
@@ -58,7 +58,7 @@ namespace LR6_CSH_Server
                     return 401;
                 }
             }
-            Console.WriteLine($"User {foundUser.Login} not found.");
+            Console.WriteLine($"User {token} not found.");
             return 404;
         }
     }

@@ -130,6 +130,7 @@
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(215, 27);
             this.tbPassword.TabIndex = 6;
+            this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
             // 
             // panelMainWin
             // 
