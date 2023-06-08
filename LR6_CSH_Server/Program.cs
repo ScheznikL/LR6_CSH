@@ -18,51 +18,20 @@ namespace LR6_CSH_Server
             FileConfig.ReadUserInfo();
             Task.WaitAll(Task.Run(() => Listen()));
         }
-
         private static void StartServer()
         {
             try
             {
                 httpListener = new HttpListener();
-                //httpListener.Prefixes.Add("http://10.0.2.15:8080/");
                 httpListener.Prefixes.Add("http://localhost:8080/");
-                //httpListener.Prefixes.Add("http://192.168.56.1:8081/");
-
-                // Specify the authentication delegate.
-
-                // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous | AuthenticationSchemes.Basic;
-
-                //httpListener.AuthenticationSchemeSelectorDelegate =
-                //    new AuthenticationSchemeSelector(AuthenticationSchemeForClient);
-
                 httpListener.Start();
                 Console.WriteLine("HTTP Server was stared...");
             }
-
             catch
             {
                 Console.WriteLine("Smth went wrong.\nRerun Server with higher rights...");
             }
-        }
-
-        static AuthenticationSchemes AuthenticationSchemeForClient(HttpListenerRequest request)
-        {
-            Console.WriteLine("Client authentication protocol selection in progress...");
-            // Do not authenticate local machine requests.
-            return AuthenticationSchemes.None;
-            //var res1 = request.IsAuthenticated;
-            //var res2 = request.GetClientCertificate();
-            //var res3 = request.ClientCertificateError;
-            //if (request.RemoteEndPoint.Address.Equals(IPAddress.Broadcast) || request.IsLocal)
-            //{
-            //    return AuthenticationSchemes.None;
-            //}
-            //else
-            //{
-            //    return AuthenticationSchemes.Basic;
-            //}
-        }
-
+        }      
         public static async Task ProcessRequestAsync(HttpListenerContext context)
         {
             ComposeUserTokenFromHeader(context.Request); 
